@@ -53,23 +53,23 @@ The analysis uses district boundaries, ambiguously geocoded tweet data, and a po
 
 ### 1. Random candidate point generation
 
-For each tweet associated with a district, multiple random candidate points are generated inside the district polygon.
+Candidate point generation employs a Cartesian random sampling method based on polygonal bounding boxes: uniform random (x, y) coordinates are generated within each district's bounding box, then filtered using the within () function to ensure points fall inside the polygon. 
 
 ### 2. Population-weighted candidate selection
 
-Candidate points are sampled against a population raster, and the point with the highest raster value is selected as the most likely location.
+The number of candidate points, denoted as n, is one of the key parameters in the Weighted Redistribution algorithm, directly influencing the stability and randomness of the results. When n is small, the redistribution positions are more susceptible to the influence of random sampling; while a larger n enables a more thorough exploration of the high-weight areas within the administrative region, but it also increases the computational cost. When n = 10 there are more hotspots, but they are more scattered. However, when n = 50, hotspots within the district are more stable and the focus is more concentrated in a few specific areas.
 
 ### 3. Radius calculation
 
-An influence radius is calculated based on administrative area and a scaling parameter.
+After that, an influence radius was calculated for each redistributed point based on the size of the administrative area and a scaling parameter.
 
 ### 4. Distance-decay redistribution
 
-Each selected point is expanded using a circular kernel with linear distance decay.
+Each selected point was then spread into a circular surface using a simple linear distance-decay function.
 
 ### 5. Output surface generation
 
-The weighted contributions of all redistributed points are accumulated into a final continuous surface representing probable tweet intensity.
+Finally, all redistributed surfaces were added together to produce a continuous map showing the likely spatial pattern of tweet activity.
 
 ## Key Features
 
@@ -96,20 +96,19 @@ This highlights that weighted redistribution is sensitive to parameter choice an
 ## Project Structure
 
 ```bash
+## Project Structure
+
 weighted-redistribution/
-│
-├── **data/**
-│   ├── wr/
-│   │   ├── 100m_pop_2019.tif
-│   │   ├── gm-districts.shp
-│   │   └── level3-tweets-subset.shp
-│
-├── out/
-│   └── tweets_heat_map.png
-│
-├── src/
-│   └── weighted_redistribution.py
-│
+├── document/
+│   └── weighted redistribution of tweet data.pdf
+├── figure/
+│   ├── n_candidates_10.png
+│   ├── n_candidates_20.png
+│   ├── n_candidates_50.png
+│   ├── naive_heatmap.png
+│   └── pop_tweets_map.png
+├── script/
+│   └── Weighted Redistribution of tweet data.py
 └── README.md
 ```
 
