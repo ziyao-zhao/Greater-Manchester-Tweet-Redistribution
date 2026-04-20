@@ -22,9 +22,9 @@ The result is a more realistic representation of the spatial distribution of twe
 > 
 > ## Academic Context
 > 
-> This project is based on a university coursework assignment involving the implementation of the weighted redistribution algorithm from Huck et al. (2015).
+> This repository is adapted from a university coursework project. 
 > 
-> While the underlying programming techniques were learned through weekly course practicals, the complete workflow, adaptation, analysis, visualisation, and project presentation were completed by the author.
+>The core method was introduced in class, and the implementation, results, and write-up presented here were completed by the author.
 > 
 
 ---
@@ -36,9 +36,10 @@ The result is a more realistic representation of the spatial distribution of twe
 
 <h3>Naive heatmap</h3>
 <img src="figure/naive_heatmap.png" alt="Naive heatmap" width="650">
-Compared with direct mapping, the redistributed surface，the redistribution one reduces the appearance of artificial hotspots centred on administrative units, concentrates higher weighted values in denser urban areas, produces localised peaks rather than uniform district-centred blobs.
 
-This makes the result more spatially plausible for exploratory analysis of social media activity.
+Higher cumulative weights are concentrated in Manchester city center, primarily distributed within densely populated urban areas, while most regions within the study area exhibit low or near-zero values. Compared with direct mapping, the redistributed surface，the redistribution one reduces the appearance of artificial hotspots centred on administrative units, concentrates higher weighted values in denser urban areas, produces localised peaks rather than uniform district-centred blobs.
+
+Unlike traditional heatmaps, this surface does not display artificial hotspots centered around administrative centers. The weighted redistribution algorithm disperses activity across zones based on weight distribution, reducing the risk of false hotspots caused by mixed spatial scales in the input data.This makes the result more spatially plausible for exploratory analysis of social media activity.
 
 ## Study Area
 
@@ -111,24 +112,6 @@ weighted-redistribution/
 │   └── Weighted Redistribution of tweet data.py
 └── README.md
 ```
-
-## technologies Used
-
-**Python,**
-
-**GeoPandas**
-
-**NumPy**
-
-**Pandas**
-
-**Shapely**
-
-**scikit-image**
-
-**Matplotlib**
-
-
 ## Example Output
 
 ### Weighted redistribution output surface
