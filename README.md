@@ -32,8 +32,10 @@ The result is a more realistic representation of the spatial distribution of twe
 ## Results
 
 <h3>Weighted redistribution output</h3>
-<img src="figure/n_candidates_20.png" alt="Weighted redistribution output with candidates = 20" width="650">
+<img src="figure/n_candidates_20.png" alt="Weighted redistribution output with n_candidates = 20" width="650">
 
+<h3>Naive heatmap</h3>
+<img src="figure/naive_heatmap.png" alt="Naive heatmap" width="650">
 Compared with direct mapping, the redistributed surface，the redistribution one reduces the appearance of artificial hotspots centred on administrative units, concentrates higher weighted values in denser urban areas, produces localised peaks rather than uniform district-centred blobs.
 
 This makes the result more spatially plausible for exploratory analysis of social media activity.
