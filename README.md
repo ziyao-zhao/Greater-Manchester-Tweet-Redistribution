@@ -37,7 +37,7 @@ The result is a more realistic representation of the spatial distribution of twe
 <h3>Naive heatmap</h3>
 <img src="figure/naive_heatmap.png" alt="Naive heatmap" width="650">
 
-Higher cumulative weights are concentrated in Manchester city center, primarily distributed within densely populated urban areas, while most regions within the study area exhibit low or near-zero values. Compared with direct mapping, the redistributed surface，the redistribution one reduces the appearance of artificial hotspots centred on administrative units, concentrates higher weighted values in denser urban areas, produces localised peaks rather than uniform district-centred blobs.
+Higher cumulative weights are concentrated in Manchester city center, primarily distributed within densely populated urban areas, while most regions within the study area exhibit low or near-zero values.Compared with direct point mapping, the redistributed surface reduces the appearance of artificial hotspots centred on administrative units, concentrates higher values in denser urban areas, and produces more localised peaks rather than uniform district-centred blobs.
 
 Unlike traditional heatmaps, this surface does not display artificial hotspots centered around administrative centers. The weighted redistribution algorithm disperses activity across zones based on weight distribution, reducing the risk of false hotspots caused by mixed spatial scales in the input data.This makes the result more spatially plausible for exploratory analysis of social media activity.
 
@@ -62,15 +62,15 @@ The number of candidate points, denoted as n, is one of the key parameters in th
 
 ### 3. Radius calculation
 
-After that, an influence radius was calculated for each redistributed point based on the size of the administrative area and a scaling parameter.
+After candidate selection, an influence radius was calculated for each district based on its polygon area and a scaling parameter. In the implementation, the radius was defined as r = sqrt((area * s) / pi) , where area is the district area and s is a user-defined scaling coefficient. The resulting radius was then converted from map units into raster cell units using the population raster resolution, so that it could be applied directly in the redistribution process.
 
 ### 4. Distance-decay redistribution
 
-Each selected point was then spread into a circular surface using a simple linear distance-decay function.
+Each selected point was redistributed onto the output raster using a circular neighbourhood defined by the calculated radius. In the code, a disk-shaped kernel was generated around each point, and the weight assigned to each raster cell decreased linearly with distance from the centre, following value=1−d/r, where d is the cell distance from the seed point and r is the radius in raster cells. This means that cells closest to the selected point received the highest weights, while weights gradually declined towards the edge of the circle.
 
 ### 5. Output surface generation
 
-Finally, all redistributed surfaces were added together to produce a continuous map showing the likely spatial pattern of tweet activity.
+The weighted contributions from all redistributed points are then accumulated on a blank raster surface to generate the final output. Through this process, the individual redistribution surfaces are combined into a continuous map representing the probable spatial pattern of tweet activity after weighted redistribution.
 
 ## Key Features
 
@@ -89,9 +89,26 @@ Finally, all redistributed surfaces were added together to produce a continuous 
 
 ## Sensitivity to Parameters
 
-This project explored how the number of candidate points (`n_candidates`) affects redistribution behaviour. **Lower values** (e.g. 10) produce more scattered hotspots. **Higher values** (e.g. 50) produce more stable and concentrated outputs. A mid-range setting was used as a practical balance between stability and computational.
-
+This project explored how the number of candidate points (`n_candidates`) affects redistribution behaviour. **Lower values** (e.g. 10) produce more scattered hotspots. **Higher values** (e.g. 50) produce more stable and concentrated outputs.A mid-range setting was used as a practical balance between stability and computational cost.
 This highlights that weighted redistribution is sensitive to parameter choice and should be interpreted carefully.
+### Parameter comparison
+To illustrate parameter sensitivity, outputs for n_candidates = 10, 20, and 50 are shown below.
+
+- `n_candidates = 10`
+- `n_candidates = 20`
+- `n_candidates = 50`
+
+These help demonstrate the sensitivity and robustness of the redistribution process.
+
+<h3>"Weighted redistribution candidates = 10</h3>
+<img src="figure/n_candidates_10.png" alt="Weighted redistribution candidates = 10" width="650">
+
+<h3>"Weighted redistribution candidates = 20</h3>
+<img src="figure/n_candidates_20.png" alt="Weighted redistribution candidates = 20" width="650">
+
+<h3>"Weighted redistribution candidates = 50</h3>
+<img src="figure/n_candidates_50.png" alt="Weighted redistribution candidates = 50" width="650">
+
 
 
 ## Project Structure
@@ -112,27 +129,20 @@ weighted-redistribution/
 │   └── Weighted Redistribution of tweet data.py
 └── README.md
 ```
-## Example Output
 
-### Weighted redistribution output surface
+## Requirements
 
-<h3>Weighted redistribution output</h3>
-<img src="figure/n_candidates_10.png" alt="Weighted redistribution candidates = 10" width="650">
-
-<h3>Weighted redistribution output</h3>
-<img src="figure/n_candidates_50.png" alt="Weighted redistribution candidates = 50" width="650">
-
-### Parameter comparison
-You may also include additional figures comparing different parameter values, for example:
-
-- `n_candidates = 10`
-- `n_candidates = 20`
-- `n_candidates = 50`
-
-These help demonstrate the sensitivity and robustness of the redistribution process.
+- Python 3.x
+- geopandas
+- rasterio
+- numpy
+- scikit-image
+- pandas
+- shapely
+- matplotlib
+- matplotlib-scalebar
 
 ## Limitations
-
 The algorithm relies exclusively on population density as the weighting surface. However, tweet activity in urban environments is shaped by a range of additional factors, including land-use characteristics (for example, shopping centres, transport hubs, and parks), mobile network coverage, and demographic differences among users. The omission of these factors means that some patterns of social media activity may not be fully captured by the current weighting scheme.
 
 Furthermore, the population dataset used in this study represents conditions in 2019. Subsequent changes in urban development and population distribution within Greater Manchester may introduce discrepancies between the weighting surface and present-day conditions, potentially affecting the accuracy of the redistribution results.
